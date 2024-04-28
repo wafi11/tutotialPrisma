@@ -1,0 +1,62 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+
+// model kelasTanding {
+//   id          String       @id @default(auto()) @map("_id")  @db.ObjectId
+//   kategori String
+//   peserta Peserta[] 
+// }
+model Peserta {
+  id          String       @id @default(auto()) @map("_id")  @db.ObjectId
+  nama        String
+  kontingen   String
+  kelasTanding String   
+  kejuaraan   Kejuaraan @relation(fields: [kejuaraanId], references: [id])
+  kejuaraanId String @db.ObjectId
+  pertandingans PesertaPertandingan[]   
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Pertandingan {
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
+  waktu       DateTime
+  lokasi      String?
+  kejuaraan   Kejuaraan @relation(fields: [kejuaraanId], references: [id])
+  kejuaraanId String  @db.ObjectId
+  pesertas    PesertaPertandingan[] 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+}
+
+model PesertaPertandingan {
+  id              String          @id @default(auto()) @map("_id") @db.ObjectId
+  peserta         Peserta         @relation(fields: [pesertaId], references: [id])
+  pesertaId       String          @db.ObjectId
+  pertandingan    Pertandingan    @relation(fields: [pertandinganId], references: [id])
+  kejuaraan       Kejuaraan       @relation(fields: [kejuaraanId], references: [id])
+  kejuaraanId     String          @db.ObjectId
+  pertandinganId  String          @db.ObjectId
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+}
+model Kejuaraan {
+  id                  String                   @id @default(auto()) @map("_id") @db.ObjectId
+  nama                String
+  tanggalMulai        DateTime
+  tanggalSelesai      DateTime
+  lokasi              String
+  peserta             Peserta[]                
+  pesertas            PesertaPertandingan[]   
+  pertandingan        Pertandingan[] 
+  createdAt           DateTime                 @default(now())
+  updatedAt           DateTime                 @updatedAt
+}
